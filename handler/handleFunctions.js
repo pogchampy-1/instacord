@@ -34,7 +34,7 @@ module.exports = (client) => {
     });
 
     client.once("ready", async () => {
-        await client.guilds.cache.get("888760200620834876").commands.set(slashCommands)
+        await client.guilds.cache.get(process.env.guildId).commands.set(slashCommands)
     });
 
     connect(process.env.mongoDB)
