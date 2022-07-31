@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "pogchampy",
-  "license": "ISC",
+  "license": "AGPL-3.0",
   "dependencies": {
     "@napi-rs/canvas": "^0.1.25",
     "discord.js": "^14.1.1",

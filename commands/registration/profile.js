@@ -1,6 +1,7 @@
-const { Client, ChatInputCommandInteraction, ApplicationCommandOptionType } = require("discord.js");
+const { Client, ChatInputCommandInteraction, ApplicationCommandOptionType, AttachmentBuilder } = require("discord.js");
 const { countryList } = require("../../json/countries.json");
 const { profiles } = require("../../models/profile");
+const Canvas = require("@napi-rs/canvas");
 
 module.exports = {
     data: {
@@ -133,6 +134,90 @@ module.exports = {
                 content: `Successfully deleted your account!`,
                 ephemeral: true
             }).catch(() => {});
-        } 
+        } else if (sub === "view") {
+            if (!data) return interaction.reply({
+                content: `You are not registered in the client!`,
+                ephemeral: true
+            });
+
+            const applyText = (canvas, text) => {
+                const context = canvas.getContext("2d");
+
+                let fontSize = 70;
+
+                do {
+                    context.font = `bold ${fontSize -= 10}px Cascadia Code`;
+                } while (context.measureText(text).width > canvas.width - 300);
+
+                return context.font;
+            }
+            const canvas = Canvas.createCanvas(700, 250)
+            const ctx = canvas.getContext("2d");
+
+            const image = await Canvas.loadImage("./assets/background.png");
+
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = "#009ff"
+
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = applyText(canvas, data.username);
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.fillText(data.username, canvas.width / 2.5, canvas.height / 1.8)
+
+            ctx.font = 'bold 15px Cascadia Code';
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.fillText(data.bio ? `Bio: ${data.bio}` : "Bio: Not set", canvas.width / 2.5, canvas.height / 1.4)
+
+            ctx.font = 'bold 15px Cascadia Code';
+
+            ctx.textAlign = "right";
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.fillText(`Info: ${data.age} | ${data.gender} | ${new Date(data.birthday)?.toLocaleDateString()}`, 675, canvas.height / 1.4)
+
+            ctx.font = 'bold 10px Cascadia Code';
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.fillText(`Followers: ${data.followers}`, 350, canvas.height / 1.1)
+
+            ctx.font = 'bold 10px Cascadia Code';
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.fillText(`Following: ${data.following}`, 450, canvas.height / 1.1);
+
+            ctx.font = "bold 10px Cascadia Code";
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.fillText(`Country: ${data.country}`, 675, canvas.height / 1.1);
+
+            ctx.beginPath();
+
+            ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+
+            ctx.closePath();
+
+            ctx.clip();
+
+            const avatar = await Canvas.loadImage(interaction.user?.displayAvatarURL({ extension: "jpg" }));
+
+            ctx.drawImage(avatar, 25, 25, 200, 200);
+
+            const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
+
+            interaction.reply({
+                files: [attachment],
+                ephemeral: true
+            }).catch(() => console.log("An error occured!"));
+        }
     }
 }
