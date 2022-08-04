@@ -52,7 +52,7 @@ module.exports = {
                     },
                     {
                         name: "birthday",
-                        description: "Input a birthday (dd-mm-yyyy)",
+                        description: "Input a birthday (dd m yyyy)",
                         type: ApplicationCommandOptionType.String,
                         required: true
                     },
@@ -61,6 +61,50 @@ module.exports = {
                         description: "Input a bio",
                         type: ApplicationCommandOptionType.String,
                         required: false
+                    },
+                    {
+                        name: "background",
+                        description: "Input a background color",
+                        type: ApplicationCommandOptionType.String,
+                        choices: [
+                            {
+                                name: "black",
+                                value: "black"
+                            },
+                            {
+                                name: "blue",
+                                value: "blue"
+                            },
+                            {
+                                name: "blurple",
+                                value: "blurple"
+                            },
+                            {
+                                name: "green",
+                                value: "green"
+                            },
+                            {
+                                name: "indigo",
+                                value: "indigo"
+                            },
+                            {
+                                name: "orange",
+                                value: "orange"
+                            },
+                            {
+                                name: "red",
+                                value: "red"
+                            },
+                            {
+                                name: "violet",
+                                value: "violet"
+                            },
+                            {
+                                name: "yellow",
+                                value: "yellow"
+                            }
+                        ],
+                        required: false,
                     }
                 ]
             },
@@ -85,6 +129,7 @@ module.exports = {
         const country = interaction.options.getString("country");
         const birthday = interaction.options.getString("birthday");
         const bio = interaction.options.getString("bio") || null;
+        const banner = interaction.options.getString("background") || "black";
 
         let validateBirthday = /^(3[01]|[12][0-9]|0[1-9]) (January|February|March|April|May|June|July|August|September|October|November|December) \b(19|20)\d\d\b$/i
 
@@ -116,6 +161,7 @@ module.exports = {
                 country,
                 following: 0,
                 followers: 0,
+                banner,
             }).save();
 
             interaction.reply({
@@ -154,7 +200,37 @@ module.exports = {
             const canvas = Canvas.createCanvas(700, 250)
             const ctx = canvas.getContext("2d");
 
-            const image = await Canvas.loadImage("./assets/background.png");
+            let image;
+
+            switch (data.banner) {
+                case "black": 
+                    image = await Canvas.loadImage("./assets/backgrounds/black.png");
+                    break;
+                case "blue": 
+                    image = await Canvas.loadImage("./assets/backgrounds/blue.png");
+                    break;
+                case "blurple": 
+                    image = await Canvas.loadImage("./assets/backgrounds/blurple.png");
+                    break;
+                case "green": 
+                    image = await Canvas.loadImage("./assets/backgrounds/green.png");
+                    break;
+                case "indigo": 
+                    image = await Canvas.loadImage("./assets/backgrounds/indigo.png");
+                    break;
+                case "orange": 
+                    image = await Canvas.loadImage("./assets/backgrounds/orange.png");
+                    break;
+                case "red": 
+                    image = await Canvas.loadImage("./assets/backgrounds/red.png");
+                    break;
+                case "violet": 
+                    image = await Canvas.loadImage("./assets/backgrounds/violet.png");
+                    break;
+                case "yellow": 
+                    image = await Canvas.loadImage("./assets/backgrounds/yellow.png");
+                    break;
+            }
 
             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
@@ -166,7 +242,7 @@ module.exports = {
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(data.username, canvas.width / 2.5, canvas.height / 1.8)
+            ctx.fillText(data.username, canvas.width / 2.5, canvas.height / 1.9)
 
             ctx.font = 'bold 15px Cascadia Code';
 

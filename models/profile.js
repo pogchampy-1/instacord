@@ -10,4 +10,5 @@ module.exports.profiles = model("profiles", new Schema({
     country: String,
     following: Number,
     followers: Number,
+    banner: String,
 }));
