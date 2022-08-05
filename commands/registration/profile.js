@@ -67,42 +67,15 @@ module.exports = {
                         description: "Input a background color",
                         type: ApplicationCommandOptionType.String,
                         choices: [
-                            {
-                                name: "black",
-                                value: "black"
-                            },
-                            {
-                                name: "blue",
-                                value: "blue"
-                            },
-                            {
-                                name: "blurple",
-                                value: "blurple"
-                            },
-                            {
-                                name: "green",
-                                value: "green"
-                            },
-                            {
-                                name: "indigo",
-                                value: "indigo"
-                            },
-                            {
-                                name: "orange",
-                                value: "orange"
-                            },
-                            {
-                                name: "red",
-                                value: "red"
-                            },
-                            {
-                                name: "violet",
-                                value: "violet"
-                            },
-                            {
-                                name: "yellow",
-                                value: "yellow"
-                            }
+                            { name: "black", value: "black" },
+                            { name: "blue", value: "blue" },
+                            { name: "blurple", value: "blurple" },
+                            { name: "green", value: "green" },
+                            { name: "indigo", value: "indigo" },
+                            { name: "orange", value: "orange" },
+                            { name: "red", value: "red" },
+                            { name: "violet", value: "violet" },
+                            { name: "yellow", value: "yellow" }
                         ],
                         required: false,
                     }
@@ -131,7 +104,7 @@ module.exports = {
         const bio = interaction.options.getString("bio") || null;
         const banner = interaction.options.getString("background") || "black";
 
-        let validateBirthday = /^(3[01]|[12][0-9]|0[1-9]) (January|February|March|April|May|June|July|August|September|October|November|December) \b(19|20)\d\d\b$/i
+        let validateBirthday = /^(3[01]|[12][0-9]|0[1-9]) (January|February|March|April|May|June|July|August|September|October|November|December) \b(19|20)\d\d\b$/i;
 
         const data = await profiles.findOne({ _id: interaction.user?.id });
 
@@ -174,12 +147,12 @@ module.exports = {
                 ephemeral: true
             });
 
-            await profiles.deleteOne({ _id: interaction.user?.id }).catch(() => {}); 
+            await profiles.deleteOne({ _id: interaction.user?.id }).catch(() => { });
 
             interaction.reply({
                 content: `Successfully deleted your account!`,
                 ephemeral: true
-            }).catch(() => {});
+            }).catch(() => { });
         } else if (sub === "view") {
             if (!data) return interaction.reply({
                 content: `You are not registered in the client!`,
@@ -196,45 +169,15 @@ module.exports = {
                 } while (context.measureText(text).width > canvas.width - 300);
 
                 return context.font;
-            }
-            const canvas = Canvas.createCanvas(700, 250)
+            };
+            const canvas = Canvas.createCanvas(700, 250);
             const ctx = canvas.getContext("2d");
 
-            let image;
-
-            switch (data.banner) {
-                case "black": 
-                    image = await Canvas.loadImage("./assets/backgrounds/black.png");
-                    break;
-                case "blue": 
-                    image = await Canvas.loadImage("./assets/backgrounds/blue.png");
-                    break;
-                case "blurple": 
-                    image = await Canvas.loadImage("./assets/backgrounds/blurple.png");
-                    break;
-                case "green": 
-                    image = await Canvas.loadImage("./assets/backgrounds/green.png");
-                    break;
-                case "indigo": 
-                    image = await Canvas.loadImage("./assets/backgrounds/indigo.png");
-                    break;
-                case "orange": 
-                    image = await Canvas.loadImage("./assets/backgrounds/orange.png");
-                    break;
-                case "red": 
-                    image = await Canvas.loadImage("./assets/backgrounds/red.png");
-                    break;
-                case "violet": 
-                    image = await Canvas.loadImage("./assets/backgrounds/violet.png");
-                    break;
-                case "yellow": 
-                    image = await Canvas.loadImage("./assets/backgrounds/yellow.png");
-                    break;
-            }
+            let image = await Canvas.loadImage(`./assets/backgrounds/${data.banner}.png`);
 
             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-            ctx.strokeStyle = "#009ff"
+            ctx.strokeStyle = "#009ff";
 
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
@@ -242,13 +185,13 @@ module.exports = {
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(data.username, canvas.width / 2.5, canvas.height / 1.9)
+            ctx.fillText(data.username, canvas.width / 2.5, canvas.height / 1.9);
 
             ctx.font = 'bold 15px Cascadia Code';
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(data.bio ? `Bio: ${data.bio}` : "Bio: Not set", canvas.width / 2.5, canvas.height / 1.4)
+            ctx.fillText(data.bio ? `Bio: ${data.bio}` : "Bio: Not set", canvas.width / 2.5, canvas.height / 1.4);
 
             ctx.font = 'bold 15px Cascadia Code';
 
@@ -256,13 +199,13 @@ module.exports = {
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(`Info: ${data.age} | ${data.gender} | ${new Date(data.birthday)?.toLocaleDateString()}`, 675, canvas.height / 1.4)
+            ctx.fillText(`Info: ${data.age} | ${data.gender} | ${new Date(data.birthday)?.toLocaleDateString()}`, 675, canvas.height / 1.4);
 
             ctx.font = 'bold 10px Cascadia Code';
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(`Followers: ${data.followers}`, 350, canvas.height / 1.1)
+            ctx.fillText(`Followers: ${data.followers}`, 350, canvas.height / 1.1);
 
             ctx.font = 'bold 10px Cascadia Code';
 
@@ -296,4 +239,4 @@ module.exports = {
             }).catch(() => console.log("An error occured!"));
         }
     }
-}
+};
