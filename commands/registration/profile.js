@@ -327,6 +327,11 @@ module.exports = {
                 data.banner = value?.toString();
                 await data.save({ safe: true }).catch(() => { });
             }
+
+            interaction.reply({
+                content: `Updated **${mod}** to **${value?.toString()}**`,
+                ephemeral: true
+            });
         }
     }
 };
