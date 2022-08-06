@@ -90,11 +90,40 @@ module.exports = {
                 name: "view",
                 description: "View your InstaCord profile",
                 type: ApplicationCommandOptionType.Subcommand
+            },
+            {
+                name: "update",
+                description: "Update your InstaCord profile",
+                type: ApplicationCommandOptionType.Subcommand,
+                options: [
+                    {
+                        name: "module",
+                        description: "Input a module",
+                        type: ApplicationCommandOptionType.String,
+                        choices: [
+                            { name: "username", value: "username" },
+                            { name: "bio", value: "bio" },
+                            { name: "age", value: "age" },
+                            { name: "birthday", value: "birthday" },
+                            { name: "gender", value: "gender" },
+                            { name: "country", value: "country" },
+                            { name: "banner", value: "banner" },
+                        ],
+                        required: true
+                    },
+                    {
+                        name: "value",
+                        description: "Input a value",
+                        type: ApplicationCommandOptionType.String,
+                        autocomplete: true,
+                        required: true
+                    }
+                ]
             }
         ]
     },
     /** @param {{ client: Client; interaction: ChatInputCommandInteraction; }} */
-    execute: async ({ client, interaction }) => {
+    execute: async ({ interaction }) => {
         const sub = interaction.options.getSubcommand();
         const username = interaction.options.getString("username");
         const age = interaction.options.getInteger("age");
@@ -103,6 +132,8 @@ module.exports = {
         const birthday = interaction.options.getString("birthday");
         const bio = interaction.options.getString("bio") || null;
         const banner = interaction.options.getString("background") || "black";
+        const mod = interaction.options.getString("module");
+        const value = interaction.options.getString("value");
 
         let validateBirthday = /^(3[01]|[12][0-9]|0[1-9]) (January|February|March|April|May|June|July|August|September|October|November|December) \b(19|20)\d\d\b$/i;
 
@@ -237,6 +268,58 @@ module.exports = {
                 files: [attachment],
                 ephemeral: true
             }).catch(() => console.log("An error occured!"));
+        } else if (sub === "update") {
+            if (!data) return interaction.reply({
+                content: `You are not registered in the client!`,
+                ephemeral: true
+            });
+            if (mod === "username") {
+                data.username = value?.toString();
+                await data.save({ safe: true }).catch(() => { });
+            } else if (mod === "bio") {
+                data.bio = value?.toString();
+                await data.save({ safe: true }).catch(() => { });
+            } else if (mod === "age") {
+                if (parseInt(value) < 13 || parseInt(value) > 100) return interaction.reply({
+                    content: "Invalid age provided",
+                    ephemeral: true
+                });
+
+                data.age = parseInt(value);
+                await data.save({ safe: true }).catch(() => { })
+            } else if (mod === "birthday") {
+                if (!validateBirthday.test(birthday)) return interaction.reply({
+                    content: `You have provided an invalid birth date!`,
+                    ephemeral: true
+                });
+
+                data.birthday = new Date(value);
+                await data.save({ safe: true }).catch(() => { });
+            } else if (mod === "gender") {
+                if (!["male", "female"]?.some((x) => x === value?.toLowerCase())) return interaction.reply({
+                    content: "Invalid gender provided",
+                    ephemeral: true
+                });
+
+                data.gender = `${value[0].toUpperCase()}${value.slice(1).toLowerCase()}`;
+                await data.save({ safe: true }).catch(() => { });
+            } else if (mod === "country") {
+                if (!countryList?.includes(value.toString())) return interaction.reply({
+                    content: `You have provided an invalid country!`,
+                    ephemeral: true
+                });
+
+                data.country = value?.toString();
+                await data.save({ safe: true }).catch(() => { });
+            } else if (mod === "banner") {
+                if (!["blue", "green", "black", "blurple", "indigo", "orange", "red", "violet", "yellow"]?.some((x) => x === value?.toLowerCase())) return interaction.reply({
+                    content: `Invalid background color provided`,
+                    ephemeral: true
+                });
+
+                data.banner = value?.toString();
+                await data.save({ safe: true }).catch(() => { });
+            }
         }
     }
 };
