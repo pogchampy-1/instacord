@@ -193,7 +193,7 @@ module.exports = {
             const applyText = (canvas, text) => {
                 const context = canvas.getContext("2d");
 
-                let fontSize = 70;
+                let fontSize = 30;
 
                 do {
                     context.font = `bold ${fontSize -= 10}px Cascadia Code`;
@@ -203,6 +203,12 @@ module.exports = {
             };
             const canvas = Canvas.createCanvas(700, 250);
             const ctx = canvas.getContext("2d");
+
+            const circle = {
+                x: canvas.width / 11.0,
+                y: canvas.height / 3.5,
+                radius: 30
+            }
 
             let image = await Canvas.loadImage(`./assets/backgrounds/${data.banner}.png`);
 
@@ -216,51 +222,52 @@ module.exports = {
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(data.username, canvas.width / 2.5, canvas.height / 1.9);
+            ctx.fillText(data.username, canvas.width / 7.0, canvas.height / 3.2);
 
-            ctx.font = 'bold 15px Cascadia Code';
+            ctx.font = "bold 20px Cascadia Code";
+
+            ctx.fillStyle = "#ffffff";
+            
+            ctx.fillText(data.gender, 600, canvas.height / 3.3)
+
+            ctx.font = 'bold 25px Cascadia Code';
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(data.bio ? `Bio: ${data.bio}` : "Bio: Not set", canvas.width / 2.5, canvas.height / 1.4);
-
-            ctx.font = 'bold 15px Cascadia Code';
-
-            ctx.textAlign = "right";
-
-            ctx.fillStyle = "#ffffff";
-
-            ctx.fillText(`Info: ${data.age} | ${data.gender} | ${new Date(data.birthday)?.toLocaleDateString()}`, 675, canvas.height / 1.4);
+            ctx.fillText(data.bio ? `${data.bio}` : "Not set", 25, canvas.height / 1.7);
 
             ctx.font = 'bold 10px Cascadia Code';
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(`Followers: ${data.followers}`, 350, canvas.height / 1.1);
+            ctx.fillText(`• Birthday ${new Date(data.birthday)?.toLocaleDateString()} - ${data.age} years old`, 25, canvas.height / 1.3);
 
             ctx.font = 'bold 10px Cascadia Code';
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(`Following: ${data.following}`, 450, canvas.height / 1.1);
+            ctx.fillText(`• Followers: ${data.followers} - Following: ${data.following}`, 25, canvas.height / 1.2);
 
             ctx.font = "bold 10px Cascadia Code";
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(`Country: ${data.country}`, 675, canvas.height / 1.1);
+            ctx.fillText(`• Country: ${data.country}`, 25, canvas.height / 1.1);
 
             ctx.beginPath();
 
-            ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2, true);
 
             ctx.closePath();
 
             ctx.clip();
 
             const avatar = await Canvas.loadImage(interaction.user?.displayAvatarURL({ extension: "jpg" }));
+            const aspect = avatar.width / avatar.height;
 
-            ctx.drawImage(avatar, 25, 25, 200, 200);
+            const hsx = circle.radius * Math.max(1.0 / aspect, 1.0);
+            const hsy = circle.radius * Math.max(aspect, 1.0);
+            ctx.drawImage(avatar, circle.x - hsx, circle.y - hsy, hsx * 2, hsy * 2);
 
             const attachment = new AttachmentBuilder(await canvas.encode("png"), { name: "profile.png" });
 
