@@ -163,8 +163,8 @@ module.exports = {
                 birthday: new Date(birthday),
                 gender,
                 country,
-                following: 0,
-                followers: 0,
+                following: [],
+                followers: [],
                 banner,
             }).save();
 
@@ -246,7 +246,7 @@ module.exports = {
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(`• Followers: ${data.followers} - Following: ${data.following}`, 25, canvas.height / 1.2);
+            ctx.fillText(`• Followers: ${data.followers?.length} - Following: ${data.following?.length}`, 25, canvas.height / 1.2);
 
             ctx.font = "bold 10px Cascadia Code";
 
