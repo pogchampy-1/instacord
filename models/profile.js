@@ -8,7 +8,7 @@ module.exports.profiles = model("profiles", new Schema({
     birthday: String,
     gender: String,
     country: String,
-    following: Number,
-    followers: Number,
+    following: Array,
+    followers: Array,
     banner: String,
-}));
+}, { timestamps: true }));
