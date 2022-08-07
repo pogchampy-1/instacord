@@ -1,4 +1,4 @@
-const { Client, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require("discord.js");
+const { Client, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ComponentType } = require("discord.js");
 const { profiles } = require("../../models/profile");
 
 module.exports = {
@@ -25,7 +25,7 @@ module.exports = {
         let randomUser = getData[Math.floor(Math.random() * getData.length)];
 
         /** @param {boolean} state @param {string[]} args */
-        const components = (state, args) => [
+        const components = (state, args = ["Next Page", "Follow/Unfollow", "End Interaction"]) =>
             new ActionRowBuilder().addComponents([
                 new ButtonBuilder()
                     .setCustomId("next")
@@ -42,17 +42,16 @@ module.exports = {
                     .setDisabled(state)
                     .setLabel(args[2])
                     .setStyle(ButtonStyle.Secondary)
-            ])
-        ];
+            ]);
 
         const embed = new EmbedBuilder()
             .setAuthor({ name: `We've found someone - ${randomUser.username}`, iconURL: client.user.displayAvatarURL() })
             .setColor(0x2f3136)
 
-        interaction.reply({
+        const msg = await interaction.reply({
             embeds: [
                 embed.setDescription(randomUser.bio ? randomUser.bio : "Not set").addFields(
-                        [
+                    [
                         {
                             name: "Age 👤",
                             value: `${randomUser.age}`,
@@ -60,7 +59,7 @@ module.exports = {
                         },
                         {
                             name: "Birthday 🎂",
-                            value:`<t:${~~(new Date(randomUser.birthday)?.getTime() / 1000)}:D>`,
+                            value: `<t:${~~(new Date(randomUser.birthday)?.getTime() / 1000)}:D>`,
                             inline: true,
                         },
                         {
@@ -92,8 +91,88 @@ module.exports = {
                     (await client.users.fetch(randomUser._id))?.displayAvatarURL()
                 )
             ],
-            components: components(false, ["Next Page", data.following?.includes(randomUser._id) ? "Unfollow" : "Follow", "End Interaction"]),
-            ephemeral: true
+            components: [components(false)],
+            ephemeral: true,
+            fetchReply: true
         });
+
+        const collector = msg.createMessageComponentCollector({
+            filter: (u) => u.user?.id === interaction.user?.id,
+            time: 60000,
+            componentType: ComponentType.Button
+        });
+
+        collector.on("collect", async (collect) => {
+            collect.deferUpdate().catch(() => { });
+            switch (collect.customId) {
+                case "follow":
+                    if (data.following?.includes(randomUser._id)) {
+                        data.following?.splice(data.following.indexOf(randomUser._id), 1);
+                        randomUser.followers?.splice(randomUser.followers.indexOf(data._id), 1);
+                    } else {
+                        data.following?.push(randomUser._id);
+                        randomUser.followers?.push(data._id)
+                    }
+                    await data.save({ safe: true })
+                    await randomUser.save({ safe: true });
+                    break;
+                case "next":
+                    randomUser = getData[Math.floor(Math.random() * getData.length)];
+                    interaction.editReply({
+                        embeds: [
+                            EmbedBuilder.from(embed).setDescription(randomUser.bio ? randomUser.bio : "Not set").setFields(
+                                [
+                                    {
+                                        name: "Age 👤",
+                                        value: `${randomUser.age}`,
+                                        inline: true,
+                                    },
+                                    {
+                                        name: "Birthday 🎂",
+                                        value: `<t:${~~(new Date(randomUser.birthday)?.getTime() / 1000)}:D>`,
+                                        inline: true,
+                                    },
+                                    {
+                                        name: "Gender 🧬",
+                                        value: randomUser.gender,
+                                        inline: true
+                                    },
+                                    {
+                                        name: "Country 🌏",
+                                        value: randomUser.country,
+                                        inline: true,
+                                    },
+                                    {
+                                        name: "Followers 📊",
+                                        value: `${randomUser.followers?.length?.toLocaleString()}`,
+                                        inline: true
+                                    },
+                                    {
+                                        name: "Following 📊",
+                                        value: `${randomUser.following?.length?.toLocaleString()}`,
+                                        inline: true
+                                    },
+                                    {
+                                        name: "Banner 🏳️",
+                                        value: randomUser.banner
+                                    }
+                                ]
+                            ).setFooter({ text: `Joined InstaCord: ${new Date(randomUser.createdAt)?.toLocaleDateString()}`, iconURL: client.user.displayAvatarURL() }).setThumbnail(
+                                (await client.users.fetch(randomUser._id))?.displayAvatarURL()
+                            )
+                        ],
+                    }).catch(() => { });
+                    break;
+                case "end":
+                    collector.stop();
+                    break;
+            }
+        });
+
+        collector.on("end", () => {
+            interaction.editReply({
+                components: [components(true)]
+            });
+        })
     }
 }
