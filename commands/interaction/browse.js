@@ -92,7 +92,7 @@ module.exports = {
                     (await client.users.fetch(randomUser._id))?.displayAvatarURL()
                 )
             ],
-            components: components(true, ["Next Page", data.following?.includes(randomUser._id) ? "Unfollow" : "Follow", "End Interaction"]),
+            components: components(false, ["Next Page", data.following?.includes(randomUser._id) ? "Unfollow" : "Follow", "End Interaction"]),
             ephemeral: true
         });
     }
