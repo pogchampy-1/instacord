@@ -206,7 +206,7 @@ module.exports = {
 
             const circle = {
                 x: canvas.width / 11.0,
-                y: canvas.height / 3.5,
+                y: canvas.height / 4.0,
                 radius: 30
             }
 
@@ -222,13 +222,13 @@ module.exports = {
 
             ctx.fillStyle = "#ffffff";
 
-            ctx.fillText(data.username, canvas.width / 7.0, canvas.height / 3.2);
+            ctx.fillText(data.username, canvas.width / 7.0, canvas.height / 3.7);
 
             ctx.font = "bold 20px Cascadia Code";
 
             ctx.fillStyle = "#ffffff";
             
-            ctx.fillText(data.gender, 600, canvas.height / 3.3)
+            ctx.fillText(data.gender, 600, canvas.height / 3.8)
 
             ctx.font = 'bold 25px Cascadia Code';
 
