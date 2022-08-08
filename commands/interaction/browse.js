@@ -120,7 +120,7 @@ module.exports = {
                     randomUser = getData[Math.floor(Math.random() * getData.length)];
                     interaction.editReply({
                         embeds: [
-                            EmbedBuilder.from(embed).setDescription(randomUser.bio ? randomUser.bio : "Not set").setFields(
+                            EmbedBuilder.from(embed).setAuthor({ name: `We've found someone - ${randomUser.username}`, iconURL: client.user.displayAvatarURL() }).setDescription(randomUser.bio ? randomUser.bio : "Not set").setFields(
                                 [
                                     {
                                         name: "Age 👤",

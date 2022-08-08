@@ -46,7 +46,7 @@ module.exports = {
                         let choices;
                         /** @type {string[]} */
                         let filtered;
-                        if (interaction.options.getString("value") === "banner") {
+                        if (interaction.options.getString("module") === "banner") {
                             if (!focused.value.trim().length) return interaction.respond(
                                 [
                                     { 
@@ -63,7 +63,7 @@ module.exports = {
                                     value: x
                                 }))
                             );
-                        } else if (interaction.options.getString("value") === "gender") {
+                        } else if (interaction.options.getString("module") === "gender") {
                             if (!focused.value.trim().length) return interaction.respond(
                                 [
                                     { 
@@ -80,7 +80,7 @@ module.exports = {
                                     value: x
                                 }))
                             );
-                        } else if (interaction.options.getString("value") === "country") {
+                        } else if (interaction.options.getString("module") === "country") {
                             if (!focused.value.trim().length) return interaction.respond([
                                 {
                                     name: "Input a country",
