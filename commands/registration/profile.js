@@ -295,7 +295,7 @@ module.exports = {
                 data.age = parseInt(value);
                 await data.save({ safe: true }).catch(() => { })
             } else if (mod === "birthday") {
-                if (!validateBirthday.test(birthday)) return interaction.reply({
+                if (!validateBirthday.test(value)) return interaction.reply({
                     content: `You have provided an invalid birth date!`,
                     ephemeral: true
                 });
