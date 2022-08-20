@@ -8,46 +8,34 @@ module.exports = {
     /** @param {Client} client @param {Message} message */
     execute: async (client, message) => {
         
-        if (message.author.bot) return;
-        if (message.channel.type === "DM") return;
+        if (message.author.bot || !message.guild) return;
 
 
-        let embed = new EmbedBuilder()
-        .setTitle("You mentioned me!")
-        .setColor("PINK")
-        .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
-        .setDescription(`Hey ${message.author.username}, my name is **InstaCord!**\n\nI bring **social media** and **meeting people** to Discord!\n\nI **only** function through slash commands (/). If you cannot see them, try re-inviting the bot! `)
-        .setFooter({ text: "InstaCord", iconURL: client.user.displayAvatarURL({ dynamic: true }) });
+        const embed = new EmbedBuilder()
+            .setColor(0x2f3136)
+            .setThumbnail(client.user.displayAvatarURL())
+            .setDescription(`Hey ${message.author?.toString()}, my name is **InstaCord!**\n\nI bring **social media** and **meeting people** to Discord!\n\nI **only** function through slash commands (/). If you cannot see them, try re-inviting me!`)
+            .setFooter({ text: "InstaCord", iconURL: client.user.displayAvatarURL() });
 
-        const Buttons = new ActionRowBuilder.addComponents([
+        const buttons = new ActionRowBuilder.addComponents([
             new ButtonBuilder()
             .setStyle(ButtonStyle.Link)
-            .setLabel("Invite me!")
-            .setURL(`https://discord.com/api/oauth2/authorize?client_id=botID&permissions=permissionInt&scope=bot%20applications.commands`), //replace botID with bot's ID and permissionInt with the permissions integer 
-
-
+            .setLabel("Invite me")
+            .setURL(`https://discord.com/api/oauth2/authorize?client_id=1002627058918228068&permissions=2684734464&scope=bot%20applications.commands`),  
             new ButtonBuilder()
             .setStyle(ButtonStyle.Link)
-            .setLabel("Vote!")
-            .setURL(`voteLink`), //replace voteLink with bot's vote link
-
-
-
-            new ButtonBuilder()
-            .setStyle(ButtonStyle.Link)
-            .setLabel("Support Server!")
-            .setURL(`supportServerLink`), //replace supportServerLink with bot's support server link
+            .setLabel("Support Server")
+            .setURL(`https://discord.com`),
         ]);
 
        
 
-        if (message.content ===`<@!${client.user.id}>` || message.content === `<@${client.user.id}>`) {
-            return message.channel.send(
+        if (message.content.match(/^<@!?1002627058918228068>$/)) {
+            return message.reply(
               {
-                embeds: [embed], components: [Buttons]
+                embeds: [embed], components: [buttons]
               }
             );
-          }
-       
+         }
     }
 }
