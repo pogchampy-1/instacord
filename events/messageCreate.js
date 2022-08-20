@@ -30,7 +30,7 @@ module.exports = {
 
        
 
-        if (message.content.match(/^<@!?1002627058918228068>$/)) {
+        if (message.content.match(new RegExp(`/^<@!?${client.user?.id}>$/`))) {
             return message.reply(
               {
                 embeds: [embed], components: [buttons]
