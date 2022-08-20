@@ -10,14 +10,13 @@ module.exports = {
         
         if (message.author.bot || !message.guild) return;
 
-
         const embed = new EmbedBuilder()
             .setColor(0x2f3136)
             .setThumbnail(client.user.displayAvatarURL())
             .setDescription(`Hey ${message.author?.toString()}, my name is **InstaCord!**\n\nI bring **social media** and **meeting people** to Discord!\n\nI **only** function through slash commands (/). If you cannot see them, try re-inviting me!`)
             .setFooter({ text: "InstaCord", iconURL: client.user.displayAvatarURL() });
 
-        const buttons = new ActionRowBuilder.addComponents([
+        const buttons = new ActionRowBuilder().addComponents([
             new ButtonBuilder()
             .setStyle(ButtonStyle.Link)
             .setLabel("Invite me")
@@ -30,7 +29,7 @@ module.exports = {
 
        
 
-        if (message.content.match(new RegExp(`/^<@!?${client.user?.id}>$/`))) {
+        if (message.content.match(new RegExp(`^<@!?(${client.user?.id})>$`))) {
             return message.reply(
               {
                 embeds: [embed], components: [buttons]
